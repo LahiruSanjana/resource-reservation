@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum ReservationStatus {
+  CONFIRMED
+  CANCELLED
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  name         String
+  email        String        @unique
+  role         Role          @default(MEMBER)
+  createdAt    DateTime      @default(now()) @db.Timestamptz(3)
+  reservations Reservation[]
+}
+
+model Category {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  resources Resource[]
+}
+
+model Resource {
+  id           Int           @id @default(autoincrement())
+  categoryId   Int
+  name         String
+  description  String?
+  capacity     Int?
+  location     String?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now()) @db.Timestamptz(3)
+  category     Category      @relation(fields: [categoryId], references: [id])
+  reservations Reservation[]
+}
+
+model Reservation {
+  id          Int               @id @default(autoincrement())
+  resourceId  Int
+  userId      Int
+  title       String
+  notes       String?
+  startTime   DateTime          @db.Timestamptz(3)
+  endTime     DateTime          @db.Timestamptz(3)
+  status      ReservationStatus @default(CONFIRMED)
+  cancelledAt DateTime?         @db.Timestamptz(3)
+  createdAt   DateTime          @default(now()) @db.Timestamptz(3)
+  resource    Resource          @relation(fields: [resourceId], references: [id])
+  user        User              @relation(fields: [userId], references: [id])
+
+  @@index([resourceId, startTime])
+  @@index([userId])
+}
