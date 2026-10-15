@@ -88,7 +88,7 @@ export default function ResourceManager({
     <div className="space-y-8">
       <h1 className="text-2xl font-semibold">Resources</h1>
 
-      <form onSubmit={submit} className="space-y-3 rounded-lg border bg-red-600 p-4">
+      <form onSubmit={submit} className="space-y-3 rounded-lg border bg-slate-950 p-4">
         <h2 className="font-medium">{editingId ? "Edit resource" : "Add resource"}</h2>
         <div className="grid gap-3 sm:grid-cols-4">
           <input
@@ -99,7 +99,7 @@ export default function ResourceManager({
             required
           />
           <select
-            className={input}
+            className={`${input} bg-slate-950 text-white`}
             value={form.categoryId}
             onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
             required
@@ -128,7 +128,7 @@ export default function ResourceManager({
         <div className="flex gap-2">
           <button
             disabled={saving}
-            className="rounded bg-black px-4 py-2 text-sm text-white disabled:opacity-50"
+            className="rounded bg-black px-4 py-2 text-sm text-white border-amber-50 border-2 disabled:opacity-50"
           >
             {saving ? "Saving..." : editingId ? "Save changes" : "Add resource"}
           </button>
@@ -144,9 +144,9 @@ export default function ResourceManager({
         </div>
       </form>
 
-      <div className="overflow-x-auto rounded-lg border bg-green-800">
+      <div className="overflow-x-auto rounded-lg border bg-slate-950">
         <table className="w-full text-left text-sm">
-          <thead className="border-b bg-gray-50 text-gray-600">
+          <thead className="border-b bg-slate-900 text-gray-600">
             <tr>
               <th className="p-3">Name</th>
               <th className="p-3">Category</th>
