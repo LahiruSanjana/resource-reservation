@@ -4,8 +4,7 @@ A full-stack web app for managing shared resources (meeting rooms, equipment, ve
 
 **The core problem:** reservations were handled through informal communication and manual records, causing overlapping bookings and uncertainty about availability. This app gives the organization one place to manage resources, see availability at a glance, and book without ever double-booking.
 
-- **Demo video:** `<add link>`
-- **ER diagram:** `<add link>`
+- **ER diagram:** `https://dbdiagram.io/d/6ad06dccaebfe7a21ff57ee0`
 
 ## Features
 
@@ -66,49 +65,6 @@ Reservations are cancelled (`status = CANCELLED`, `cancelledAt` set) and resourc
 - **Typed errors** (`ValidationError`, `NotFoundError`, `ConflictError`) are mapped to HTTP status codes (400, 404, 409) in one place, `lib/errors.ts`.
 - **Zod** validates input at the API boundary; the database enforces integrity again underneath.
 - **Server Components** read from the database directly; **Client Components** are used only where interactivity is needed (forms, buttons).
-
-## Database design (ER diagram)
-
-```mermaid
-erDiagram
-    User ||--o{ Reservation : makes
-    Resource ||--o{ Reservation : "is booked in"
-    Category ||--o{ Resource : groups
-
-    User {
-        int id PK
-        string name
-        string email UK
-        enum role "ADMIN | MEMBER"
-        timestamptz createdAt
-    }
-    Category {
-        int id PK
-        string name UK
-    }
-    Resource {
-        int id PK
-        int categoryId FK
-        string name
-        string description
-        int capacity
-        string location
-        boolean isActive
-        timestamptz createdAt
-    }
-    Reservation {
-        int id PK
-        int resourceId FK
-        int userId FK
-        string title
-        string notes
-        timestamptz startTime
-        timestamptz endTime
-        enum status "CONFIRMED | CANCELLED"
-        timestamptz cancelledAt
-        timestamptz createdAt
-    }
-```
 
 Indexes: the GiST index behind the exclusion constraint, plus `(resourceId, startTime)` and `(userId)` on `Reservation`.
 
